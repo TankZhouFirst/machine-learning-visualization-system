@@ -1,0 +1,302 @@
+<!doctype html>     <!-- 表示该文档为 HTML5 标准-->
+<html lang="en">
+    <head>
+        <!--***************************************************** 一些固定格式 *****************************************************-->
+        <!-- 表明以 utf-8 格式进行编码。必须加！！！ -->
+        <meta charset="UTF-8">
+
+        <!-- VScode 输入 doc， 自动生成的格式 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- 上述 3 个 meta 标签 *** 必须 *** 放在最前面，任何其他内容都 *** 必须 *** 跟随其后！ -->
+
+        <!-- 这一段不用管， copy 过来的 -->
+        <!-- 兼容 IE -->
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->    
+
+        <!-- 网页标题栏标题 -->
+        <title>Machine Learning Visualization System</title>
+
+        <!--***************************************************** CSS 调用 *****************************************************-->
+        <!-- **********************  CSS 调用放在最前面  ********************** -->
+        <!-- 调用本地 CSS -->
+        <link rel="stylesheet" type="text/css" href="css/main_layout.css">
+
+        <!-- 调用 CSS 库-->
+        <link rel="stylesheet" href="lib/css/jquery-ui.css">
+        <link rel="stylesheet" href="lib/css/jquery-ui.custom.min.css" />
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+
+    <!-- 首先需要定义好 UI 的基本布局，构件好对应的 div 骨架，之后才好进行相应的 CSS 渲染和 js 响应 -->
+    <body>
+        <div id="top_div">   <!-- 首先是全局顶层 div  -->
+            <div id="left_main_div">   <!-- 左边栏固定宽度，用于放置待选的网络层，模块等等 -->
+                <div id="left_layer_mode_change_div">  <!-- 修改 layer mode 的模式 div -->
+                    <!-- 模式切换按钮 -->
+                    <span id="layers_mode_change">          <!-- 完全模式(显示所有层)的切换，默认为 layers_off 状态 -->
+                        <i id="mode_change_button"></i>
+                    </span>
+                    <!-- 当前模式的文字描述 -->
+                    <span id="current_mode_name"></span>
+                </div>
+
+                <div id="left_layer_search_box_div">   <!-- layer 的搜索框 -->
+                    <div class="search_box">
+                        <!-- 表单，禁用回车键提交表单 -->
+                        <form onkeydown="if(event.keyCode==13){return false;}">
+                            <!-- 文本框 -->
+                            <input type="text" id="search_box_content" placeholder=" Search object" name="crid">
+                            <!-- 搜索框 -->
+                            <span id="Search_button">Search</span>
+                            <span id="Clear_button">Clear</span>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="left_layer_menu_region_div">  <!-- 常用层和模型列表 -->
+                    <!-- 这里伸缩菜单栏用到的是 bootstrap 的功能 -->
+                    <!-- 第一个菜单选项 -->
+                    <!-- 每部分的菜单包含两部分，一个是控制部分，称之为 header，另一个是列表部分，称之为 list -->
+                    <!-- 注意，展开与折叠主要通过 id 进行识别对应，通过 data-toggle， data-target， aria-labelledby 等参数进行控制（bootstrap 的东西，不懂，照着用的） -->
+                    <!-- 注意，data-target 参数中，有一个 #， 表示链接 -->
+
+                    <!-- Recent Layers -->
+                    <div class="layer_class_header" data-toggle="collapse" id="Recent_layers_header" data-target="#Recent_layers_list">     <!-- 每个层种类的列表框控制部分 -->
+                        <span class="layer_class_name"> Recent Layers </span>
+                    </div>
+
+                    <!-- 这里加上 collapse 表示默认情况下进行折叠 -->
+                    <div class="layer_class_list collapse in" id="Recent_layers_list" aria-labelledby="Recent_layers_header">             <!-- 每种类下的层列表 -->
+                        <!-- 动态创建 -->
+                    </div>
+                </div>
+
+                <div id="search_result_div" style="display:none">       <!-- 搜索时显示搜索结果，与上面的 left_layer_menu_region_div 占用同一块地方 -->                    
+                    <div class="layer_class_list" id="Search_Result_list">             <!-- 每种类下的层列表 -->
+                        <!-- 动态创建 -->
+                    </div>                      
+                </div>
+
+                <div id="layer_tool_bar">        <!-- 用于导入自定义 block 或者 module 等操作 -->
+                    <div id="layer_list_management">
+                        <button class="icon_class" id="system_config">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <button class="icon_class" id="import_all_list">
+                            <span class="glyphicon glyphicon-open" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <button class="icon_class" id="export_all_list">
+                                <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <button class="icon_class" id="ErrorInfo">
+                            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>   <!-- 图标 -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="right_main_region">     <!-- 主工作区 -->
+                <div id="right_main_toolbar">   <!-- 工具栏 -->
+                    <div id="view_btn_group">   <!-- 视图控制按钮组 -->
+                        <!-- 缩小按钮 -->
+                        <button class="icon_class" id="zoom-out">
+                            <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>   <!-- 图标 -->
+                        </button>
+                        <button class="icon_class"> </button>    <!-- 占位按钮，提供按钮之间的间隔 -->
+
+                        <!-- 放大按钮 -->
+                        <button class="icon_class" id="zoom-in">
+                            <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <!-- 全屏按钮 -->
+                        <button class="icon_class" id="button_full_screen">
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <!-- 当前绘图区用途 -->
+                        <button class="icon_class" id="canvas_mode_change">
+                            <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <!-- 清空当前图层内容 -->
+                        <button class="icon_class" id="clean_canvas">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div id="Current_canvas_mode_info">
+                        <span id="Canvas_mode">Model Name : </span>
+                        <input type="text" id="canvas_title" value="">
+                    </div>
+
+                    <div id="model_edit_group">   <!-- 文件操作按钮组 -->
+                        <!-- 保存到 localStorage -->
+                        <button class="icon_class" id="save_model">
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                        </button>
+                            
+                        <!-- 文件加载按钮，这里隐藏显示 -->
+                        <button class="icon_class">
+                            <input type="file" id="model_files_box" style="display:none" onchange="load_model();"/>
+                        </button>
+
+                        <!-- 代码生成按钮 -->
+                        <button class="icon_class" id="CodeGen">
+                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+
+                        <!-- 导入 model -->
+                        <button class="icon_class" id="import_model">
+                            <span class="glyphicon glyphicon-import"  aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+                            
+                        <!-- 导出 model -->
+                        <button class="icon_class" id="export_model">
+                            <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div id="block_edit_group" style="display:none">   <!-- 用于管理 block 编辑用的 -->
+                        <button class="icon_class"></button>
+                        <button class="icon_class"></button>
+
+                        <!-- 保存到 localStorage -->
+                        <button class="icon_class" id="save_block">
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                        </button>
+                            
+                        <!-- 文件加载按钮，这里隐藏显示 -->
+                        <button class="icon_class">
+                            <input type="file" id="block_files_box" style="display:none" onchange="load_block();"/>
+                        </button>
+
+                        <!-- 导入 block -->
+                        <button class="icon_class" id="import_block">
+                            <span class="glyphicon glyphicon-import"  aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+                                
+                        <!-- 导出 block -->
+                        <button class="icon_class" id="export_block">
+                            <span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div id="edit_block_in_model_group" style="display:none">   <!-- 文件操作按钮组 -->
+                        <button class="icon_class"></button>
+
+                        <!-- 取消编辑 -->
+                        <button class="icon_class" id="cancel_edit_block_in_model">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </button>
+                        <button class="icon_class"></button>
+                        <button class="icon_class"></button>
+                        <button class="icon_class"></button>
+
+                        <!-- 保存编辑 -->
+                        <button class="icon_class" id="save_edit_block_in_model">
+                            <span class="	glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </button>
+
+                        <button class="icon_class"></button>
+                    </div>
+                </div>
+
+                <div id="top_container">        <!-- 绘图区外层框架 -->
+                        <!-- 背景掩膜，默认隐藏 -->
+                        <div id="popBox_mask" style="display:none"></div>
+
+                        <!-- 弹窗表单，用于显示和修改参数，默认隐藏 -->
+                        <div id="popBox" style="display:none">
+                            <div class="parameters_div">
+                                <form id="parameters_form" onkeydown="if(event.keyCode==13){return false;}">
+                                    <!-- 根据对象的类型动态创建表单 -->
+                                </form>
+
+                                <form id="extra_input_form" onkeydown="if(event.keyCode==13){return false;}">
+                                    <!-- 根据对象的类型动态创建表单 -->
+                                </form>
+                            </div>
+
+                            <!-- 确认与取消按钮 -->
+                            <button id="btn_close" onclick="PopBox_Cancel()">Cancel</button>
+                            <button id="btn_determine" onclick="PopBox_OK()">Ok</button>
+                        </div>
+
+                        
+                        <!-- 画布区 -->
+                        <div id="workspace_canvas">
+                            <!-- 用于 jsPlumb 等库进行操作 -->
+                        </div>
+
+                        <!-- debug 区 -->
+                        <div id="workspace_debug">
+                            <textarea id="DebugInfoArea" rows="3" cols="20" readOnly="true"></textarea>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+
+    <!--***************************************************** JS 调用 *****************************************************-->
+    <!-- js 代码放在最后。html 是身体， css 是衣服， js 是行为。-->
+    <!-- 浏览器解析代码的时候，先加载 HTML 和 CSS，如果把 js 放在前面，将会拖慢构建网页的过程 -->
+
+    <!-- 调用 js 库 -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" type="text/javascript"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.12.0/lodash.min.js"   type="text/javascript" ></script>
+    <!-- <script src="https://cdn.rawgit.com/YuriGor/jquery.panzoom/ignoreChildrensEvents/dist/jquery.panzoom.min.js"  type="text/javascript" ></script>
+    <script src="https://cdn.rawgit.com/cpettitt/dagre/e66c29b8/dist/dagre.min.js"  type="text/javascript" ></script> -->
+    <script src="lib/js/jquery.panzoom.min.js"  type="text/javascript" ></script>
+    <script src="lib/js/dagre.min.js"  type="text/javascript" ></script>
+
+    <script src="lib/js/FileSaver.js" charset="utf-8"  type="text/javascript" ></script>
+    <script src="lib/js/jsPlumb_2.6.8_js_jsplumb.min.js"  type="text/javascript" ></script>
+
+
+    <!-- 调用本地 js -->
+    <script src="js/metaData/all_layers_metaData/Activation_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Convolution_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/DataParallel_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Distance_functions_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Dropout_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Linear_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Normalization_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Other_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Padding_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Pooling_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Sparse_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/all_layers_metaData/Vision_layers_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/models/Common_Models_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/blocks/Common_Blocks_metaData.js" type="text/javascript"></script>
+    <script src="js/metaData/metaData_Collection.js" type="text/javascript"></script>
+
+    <script src="js/Check_Type.js" type="text/javascript"></script>
+    <script src="js/file_operation.js" type="text/javascript"></script>
+    <script src="js/Layer_list_Creation.js" type="text/javascript"></script>
+    <script src="js/main_layout.js" type="text/javascript"></script>
+    <script src="js/model_Design.js" type="text/javascript"></script>
+    <script src="js/model_management.js" type="text/javascript"></script>
+    <script src="js/params_management.js" type="text/javascript"></script>
+    <script src="js/pyTorch_CodeGen.js" type="text/javascript"></script>
+</html>

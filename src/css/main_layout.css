@@ -1,0 +1,781 @@
+/*
+    ** 网页渲染 css
+*/
+/* 
+    设置 html 和 body 属性 
+    子元素只能继承父元素的宽和高，所以最外层的宽和高要设置成 100%
+    也就是说，子元素的百分比是相对于父元素而言的
+*/
+html, body{
+    height: 100%;   /* 设置尺寸 */
+    width: 100%;
+    margin: 0;
+    padding: 0px;
+    font-family: Arial, Helvetica, sans-serif;     /* 设置全局字体 */
+    /* -ms-user-select:none; */    /* 关闭文本复制 */
+    /* -moz-user-select:none;   火狐 */
+    /* -webkit-user-select:none;    webkit浏览器 */
+    user-select:none;           /* 禁止复制文本，避免双击或者拖拽过程中影响体验 */
+}
+
+
+/*
+    这里设置 height 为 100%，从而子元素可以完全填充空间
+    设置 margin-left 为 350，这样最左边栏就可以使用这 350 的空间
+    而剩余部分为主体，子元素使用 100% 可以填充剩余部分。
+    设置 overflow 为 hidden 表示清除该 div 下的 float，预占用 div 指定大小的空间
+*/
+#top_div{
+    height:100%;
+    margin-left: 350px;
+    overflow: hidden;
+}
+
+
+/*
+    最左边的一栏宽度设置为 350px，刚好就是上面 margin 的宽度。
+    注意，这里要与上面的 top_div 的 margin 对应
+    这样，left_main_div 就占据 margin 部分的空间，剩下的就可以设置为 100%
+*/
+#left_main_div{
+    width: 350px;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    float:left;      /* 这两项固定，不能随便调 */
+    position: fixed;
+}
+
+
+/*
+    layers 模式切换栏
+    注意，这里要与上面的 top_div 的 margin 对应
+*/
+#left_layer_mode_change_div{
+    width: 350px;   /* 左侧边栏宽度固定 */
+    height: 80px;
+    float:left;     /* 不能随便调 */
+}
+
+
+/*
+    模式切换按钮部分的 CSS
+*/
+/* 按钮的切换框 */
+#layers_mode_change{ 
+    display:block;    /* 显示为 block */
+    width:70px; 
+    height:30px; 
+    border:#e1e1e1 solid 3px;   /* 边界和背景 */
+    background-color: white;
+    border-radius:20px;   /* 圆角 */
+    position:absolute;    /* 绝对位置 */
+    top:30px;             /* 相对于顶部，15 px */
+    left:40px;            /* 相对于左边，40 px */
+}
+
+
+/* 按钮的属性 */
+#mode_change_button{
+    display:block; 
+    width:24px; 
+    height:24px; 
+    border-radius:50%;    /* 也就是一个圆 */
+    position:absolute; 
+    cursor:pointer;       /* 鼠标变手形 */
+    top:0px;
+    left:0px;
+    background-color: dimgray;
+    -webkit-transition:all .2s linear;  
+    -moz-transition:all .2s linear;  
+    -ms-transition:all .2s linear;  
+    -o-transition:all .2s linear; 
+    transition:all .2s linear;
+}
+
+
+/* 当前模式描述 */
+#current_mode_name{
+    font-size: 18px;
+    font-weight:bold;
+    position:absolute;    /* 相对位置 */
+    top:35px;             /* 相对于顶部，15 px */
+    left:130px;           /* 相对于左边，40 px */
+}
+
+
+/* 搜索框 */
+#left_layer_search_box_div{
+    width: 350px;
+    height: 80px;
+    float:left;
+}
+
+
+/* search_box 相关设置*/
+.search_box form{
+    margin: 0px;
+    padding: 0px;
+}
+
+
+
+.search_box input{
+    width:180px;
+    height:36px;
+    position:relative;    /* 相对位置 */
+    top: 12px;
+    left: 20px;
+    outline:none;        /* 边框透明 */
+    border: #BEBEBE solid 2px;   /* 边界属性 */
+    border-style:none none solid none;  /*上右下左，只保留下边框 */
+    background-color:white;   /* 背景透明 */
+    font-size: 18px;
+    color:#324b4e;
+}
+
+
+/* 设置搜索按钮 */
+.search_box #Search_button {
+    font-size: 18px;
+    position:relative;    /* 相对位置 */
+    top: 12px;
+    left: 20px;
+    outline:none;   /* 边界设置：无边框，无边界，无背景 */
+    border: none;
+    background:none;
+    cursor:pointer;   /* 变成手指 */
+    color:#324b4e;
+}
+
+
+
+/* 设置搜索按钮 */
+.search_box #Clear_button {
+    font-size: 18px;
+    position:relative;    /* 相对位置 */
+    top: 12px;
+    left: 30px;
+    outline:none;   /* 边界设置：无边框，无边界，无背景 */
+    border: none;
+    background:none;
+    cursor:pointer;   /* 变成手指 */
+    color:#324b4e;
+}
+
+
+/* 层列表区域 */
+#left_layer_menu_region_div{
+    width: 350px;
+    background-color: #DCDCDC;
+    height: calc(100% - 240px);        /* CSS3 新特性，也可用于 js 动态修改。注意，减号前后一定要有空格 */
+    float:left;
+    overflow-x:hidden;  /* 隐藏水平方向的滑块 */
+    overflow-y:auto;    /* 竖直方向的滑块自动模式 */
+}
+
+
+/* 列表标题设置 */
+.layer_class_header{
+    width: 350px;
+    height: 60px;
+    border: #BEBEBE solid 1px;
+    background-color: #DCDCDC;
+}
+
+
+/* 鼠标放在列表上时的属性 */
+.layer_class_header:hover{
+    cursor:pointer;       /* 换成手型 */
+    background-color:#BEBEBE;
+}
+
+
+/* 列表上现实的字体 */
+.layer_class_header .layer_class_name{
+    font-size: 20px;
+    position:relative;
+    top: 15px;
+    left: 40px;
+    font-weight:bold; 
+    color: #4682B4;
+}
+
+
+/*
+    创建 Layers list 项的属性
+*/
+.layer_class_list div{
+    width: 350px;
+    height: 70px;
+    font-size: 16px;
+    position:relative;
+    /* top: 25px;
+    left: 120px; */
+    color:#8B7E66;
+}
+
+
+/* 鼠标放在列表上时的属性 */
+.layer_class_list div:hover{
+    cursor:pointer;       /* 换成手型 */
+    background-color:#BEBEBE;
+}
+
+
+/* list 中每个 layer 的图像 */
+.single_layer_div .layer_svg{
+    position: relative;
+    float: left;
+    top:15px;
+    left: 30px;
+}
+
+
+/* list 中每个 layer 的文字 */
+.single_layer_div .layer_name{
+    font-size: 22px;
+    position: relative;
+    float: left;
+    top: 19px;
+    left: 55px;
+}
+
+
+
+/* list 中每个 layer 的图像 */
+.block_or_model .layer_svg{
+    position: relative;
+    float: left;
+    top:15px;
+    left: 30px;
+}
+
+
+/* list 中每个 layer 的文字 */
+.block_or_model .layer_name{
+    font-size: 22px;
+    position: relative;
+    float: left;
+    top: 19px;
+    left: 55px;
+}
+
+
+
+/*
+    与 left_layer_menu_region_div 区复用， css 完全一样。同一时刻只可以显示两者之一
+*/
+#search_result_div{
+    width: 350px;
+    background-color: #DCDCDC;
+    height: calc(100% - 240px);        /* CSS3 新特性，也可用于 js 动态修改。注意，减号前后一定要有空格 */
+    float:left;
+    overflow-x:hidden;  /* 隐藏水平方向的滑块 */
+    overflow-y:auto;    /* 竖直方向的滑块自动模式 */
+}
+
+
+/* 左侧边栏下面的工具栏 */
+#layer_tool_bar{
+    width: 350px;
+    height: 80px;
+    float: left;
+    background-color: #DCDCDC;
+}
+
+
+#layer_tool_bar  #layer_list_management{
+    position:absolute;
+    width: 350px;
+    height: 50px;
+    bottom: 20px;
+    left: 15px;
+}
+
+
+#layer_list_management .icon_class{
+    float: left;
+    height: 45px;
+    width: 45px;
+    border: none;
+    outline:none;
+    background-color: transparent;
+}
+
+
+#layer_list_management .icon_class span{
+    font-size: 32px;     /* 图标大小是根据字体来的 */
+}
+
+
+
+/* 右边部分的工作区整体部分 */
+#right_main_region{
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    float:left;      /* 这两项不能随便调 */
+    overflow: hidden;
+}
+
+
+/* tool bar */
+#right_main_region #right_main_toolbar{
+    width: 100%;
+    height: 80px;
+}
+
+
+#right_main_toolbar  #view_btn_group{
+    position:relative;
+    float: left;
+    width: 360px;
+    height: 40px;
+    top: 20px;
+    left: 20px;
+}
+
+
+#view_btn_group .icon_class{
+    float: left;
+    height: 40px;
+    width: 40px;
+    border: none;
+    outline:none;
+    background-color: transparent;
+}
+
+
+#view_btn_group .icon_class span{
+    font-size: 28px;     /* 图标大小是根据字体来的 */
+}
+
+
+
+#right_main_toolbar  #Current_canvas_mode_info{
+    position:relative;
+    float: left;
+    width: calc(100% - 710px);  /* view_btn_group / file_btn_group 的 width 和 left / right 还有自身 left 的结果*/
+    height: 40px;
+    top: 20px;
+    left: 20px;
+}
+
+
+
+/* 设置搜索按钮 */
+#Current_canvas_mode_info #Canvas_mode {
+    width: 200px;
+    height: 40px;
+    position: relative;
+    outline:none;        /* 边框透明 */
+    border: #BEBEBE solid 2px;   /* 边界属性 */
+    border-style:none none solid none;  /*上右下左，只保留下边框 */
+    background-color:white;   /* 背景透明 */
+    font-size: 18px;
+    float: left;
+    text-align: center;     /* 字体水平居中 */
+    line-height: 40px;      /* 字体垂直居中，设置为 div 的高度即可 */
+    font-size: 22px;
+    left: calc(25% - 100px);   /* 100 源自 Canvas_mode 宽的一半 */
+}
+
+
+
+#Current_canvas_mode_info input{
+    width: 50%;
+    height: 40px;
+    position: relative;
+    outline:none;        /* 边框透明 */
+    border: #BEBEBE solid 2px;   /* 边界属性 */
+    border-style:none none solid none;  /*上右下左，只保留下边框 */
+    background-color:white;   /* 背景透明 */
+    font-size: 18px;
+    float: left;
+    text-align: center;     /* 字体水平居中 */
+    line-height: 40px;      /* 字体垂直居中，设置为 div 的高度即可 */
+    font-size: 22px;
+    left: calc(25% - 100px);  /* 100 源自 Canvas_mode 宽的一半 */
+}
+
+
+
+#right_main_toolbar #model_edit_group{
+    position:absolute;
+    width: 280px;
+    height: 40px;
+    top: 20px;
+    right: 50px;
+}
+
+
+
+#model_edit_group .icon_class{
+    float: left;
+    height: 40px;
+    width: 40px;
+    border: none;
+    outline:none;
+    background-color: transparent;
+}
+
+
+#model_edit_group .icon_class span{
+    font-size: 28px;     /* 图标大小是根据字体来的 */
+}
+
+
+
+#right_main_toolbar #block_edit_group{
+    position:absolute;
+    width: 280px;
+    height: 40px;
+    top: 20px;
+    right: 50px;
+}
+
+
+
+#block_edit_group .icon_class{
+    float: left;
+    height: 40px;
+    width: 40px;
+    border: none;
+    outline:none;
+    background-color: transparent;
+}
+
+
+#block_edit_group .icon_class span{
+    font-size: 28px;     /* 图标大小是根据字体来的 */
+}
+
+
+
+#right_main_toolbar #edit_block_in_model_group{
+    position:absolute;
+    width: 280px;
+    height: 40px;
+    top: 20px;
+    right: 50px;
+}
+
+
+
+#edit_block_in_model_group .icon_class{
+    float: left;
+    height: 40px;
+    width: 40px;
+    border: none;
+    outline:none;
+    background-color: transparent;
+}
+
+
+#edit_block_in_model_group .icon_class span{
+    font-size: 28px;     /* 图标大小是根据字体来的 */
+}
+
+
+
+
+#right_main_region #top_container
+{
+    width: 100%;
+    height: calc(100% - 80px);
+ 
+    /* 设置背景 */
+    /* 这个网格背景可以留着 */
+    background-image: url(../resources/1.png);
+    background-repeat: repeat;  
+    position: relative;
+}
+
+
+/* 设置背景掩膜 */
+#popBox_mask{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.3;
+    z-index: 999;
+    background-color: #8B864E;
+}
+
+
+
+#popBox{
+    position: fixed;
+    width: 500px;
+    height: 700px;
+    left: 43%;
+    top: 23%;
+    z-index: 999;
+    background-color:#BEBEBE;
+    overflow: hidden;
+}
+
+
+#popBox .parameters_div{
+    position: relative;
+    float:left;
+    width: 420px;
+    height: 620px;
+    left: 40px;
+    top: 40px;
+    /* vertical-align:middle; */
+}
+
+
+.parameters_div #parameters_form{
+    position: relative;
+    float:left;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    font-weight:bold;
+    /* vertical-align:middle; */
+}
+
+
+
+.parameters_div #parameters_form{
+    position: relative;
+    float:left;
+    width: 100%;
+    height: 75%;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    font-weight:bold;
+    /* vertical-align:middle; */
+}
+
+
+
+#parameters_form input{
+    position: relative;
+    float: right;
+    right: 0px;
+    background-color:#FFFFF0;
+}
+
+
+
+.parameters_div #extra_input_form{
+    position: relative;
+    float:left;
+    width: 100%;
+    height: 20%;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    font-weight:bold;
+    /* vertical-align:middle; */
+}
+
+
+
+#extra_input_form select{
+    position: relative;
+    float: right;
+    width: 280px;
+    height: 30px;
+    right: 5px;
+    background-color:#FFFFF0;
+}
+
+
+
+#extra_input_form input{
+    position: relative;
+    float: right;
+    width: 280px;
+    right: 5px;
+    background-color:#FFFFF0;
+}
+
+
+
+#popBox #btn_close{
+    position: relative;
+    float:left;
+    width: 60px;
+    height: 30px;
+    left: -312px;
+    top: 630px;
+    border: none;
+    outline:none;
+    border-radius:20px;   /* 圆角 */
+    background-color: #778899;
+}
+
+
+
+#popBox #btn_determine{
+    position: relative;
+    float:left;
+    width: 60px;
+    height: 30px;
+    left: -80px;
+    top: 600px;
+    border: none;
+    outline:none;
+    border-radius:20px;   /* 圆角 */
+    background-color: #778899;
+}
+
+
+
+/* canvas 区*/
+#top_container #workspace_debug{
+    width: 100%;
+    height: 0%;
+    position: relative;
+    background-color:white;
+    border: #BEBEBE solid 2px;
+    border-style:solid none none none;  /*上右下左，只保留下边框 */
+    /* background-color:transparent; */
+}
+
+
+
+#workspace_debug #DebugInfoArea{
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+}
+
+
+
+/* canvas 区*/
+#top_container #workspace_canvas{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    /* background-color:transparent; */
+}
+
+
+
+/*
+    设置画布上每个元素的属性
+    所有层的属性一致
+*/
+.layer_in_canvas{
+    position: absolute;
+    display:block;    /* 显示为 block */
+    width: 300px;
+    height: 70px;
+    cursor: pointer;
+    color:#8B7E66;
+    border: #8B7E66 solid 3px;
+    background-color: #EEE8AA;
+    border-radius:20px;   /* 圆角 */
+}
+
+
+
+.layer_in_canvas .outShape{
+    position: absolute;
+    float: left;
+    top:-40px;
+    left: 180px;
+    font-size: 24px;
+}
+
+
+
+/* 画布中每个区的 img */
+.layer_in_canvas .layer_svg{
+    position: relative;
+    float: left;
+    top:9px;
+    left: 18px;
+}
+
+
+/* 画布中每个区的文字 */
+.layer_in_canvas .layer_name{
+    font-size: 22px;
+    position: relative;
+    float: left;
+    top: 19px;
+    left: 28px;
+}
+
+
+
+.layer_in_canvas .layer_id_info{
+    position: absolute;
+    float: left;
+    top: 70px;
+    left: 170px;
+    font-size: 28px;
+    color:rgba(0,0,0,0);   /* 透明效果 */
+}
+
+
+
+/*
+    设置画布上每个元素的属性
+    所有层的属性一致
+*/
+.block_in_canvas{
+    position: absolute;
+    display:block;    /* 显示为 block */
+    width: 300px;
+    height: 100px;
+    cursor: pointer;
+    color:#8B7E66;
+    border: #8B7E66 solid 5px;
+    background-color: orange;
+    border-radius:20px;
+}
+
+
+
+.block_in_canvas .outShape{
+    position: absolute;
+    float: left;
+    top:-40px;
+    left: 180px;
+    font-size: 24px;
+}
+
+
+
+/* 画布中每个区的 img */
+.block_in_canvas .layer_svg{
+    position: relative;
+    float: left;
+    top:22px;
+    left: 18px;
+}
+
+
+/* 画布中每个区的文字 */
+.block_in_canvas .layer_name{
+    font-size: 22px;
+    position: relative;
+    float: left;
+    top: 32px;
+    left: 28px;
+}
+
+
+
+.block_in_canvas .layer_id_info{
+    position: absolute;
+    float: left;
+    top: 100px;
+    left: 170px;
+    font-size: 28px;
+    color:rgba(0,0,0,0);   /* 透明效果 */
+}
